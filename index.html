@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="hy">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Հյուր դասընթաց 1 | ԱԲ գործիքներ</title>
+<link rel="stylesheet" href="assets/undp.css?v=6">
+</head>
+<body>
+<div class="progress" id="prog"></div>
+<div class="viewport"><div class="stage"></div></div>
+<div class="hint">← → · F</div>
+
+<script>
+/* ---------- Illustrations (inline, theme-safe) ---------- */
+const ART = {
+  fire:`<svg viewBox="0 0 200 240" fill="none"><path d="M100 18c10 44 58 66 58 124a58 58 0 0 1-116 0c0-34 20-48 28-74 8 18 18 26 30 30-6-30-6-52 0-80z" fill="oklch(70% 0.17 48)"/><path d="M100 120c6 22 30 30 30 58a30 30 0 0 1-60 0c0-18 10-26 14-38 4 8 10 12 16 14-2-14-2-24 0-34z" fill="oklch(92% 0.08 75)"/><rect x="40" y="214" width="120" height="10" rx="5" fill="oklch(56% 0.235 272)"/></svg>`,
+  echo:`<svg viewBox="0 0 240 240" fill="none"><circle cx="70" cy="120" r="26" fill="oklch(70% 0.17 48)"/><path d="M108 84a52 52 0 0 1 0 72M134 62a84 84 0 0 1 0 116M160 40a116 116 0 0 1 0 160" stroke="oklch(80% 0.13 272)" stroke-width="9" stroke-linecap="round"/><path d="M200 70a70 70 0 0 1 0 100" stroke="oklch(80% 0.13 272)" stroke-width="9" stroke-linecap="round" opacity=".35"/></svg>`,
+  golem:`<svg viewBox="0 0 220 260" fill="none"><rect x="70" y="20" width="80" height="70" rx="16" fill="oklch(70% 0.17 48)"/><rect x="88" y="46" width="14" height="10" rx="3" fill="oklch(19% 0.05 272)"/><rect x="118" y="46" width="14" height="10" rx="3" fill="oklch(19% 0.05 272)"/><rect x="50" y="98" width="120" height="100" rx="20" fill="oklch(62% 0.13 50)"/><rect x="18" y="104" width="30" height="86" rx="14" fill="oklch(62% 0.13 50)"/><rect x="172" y="104" width="30" height="86" rx="14" fill="oklch(62% 0.13 50)"/><rect x="62" y="202" width="38" height="48" rx="12" fill="oklch(62% 0.13 50)"/><rect x="120" y="202" width="38" height="48" rx="12" fill="oklch(62% 0.13 50)"/></svg>`,
+  mirror:`<svg viewBox="0 0 220 260" fill="none"><ellipse cx="110" cy="120" rx="78" ry="100" stroke="oklch(80% 0.13 272)" stroke-width="10"/><ellipse cx="110" cy="120" rx="64" ry="86" fill="oklch(30% 0.07 272)"/><circle cx="110" cy="96" r="22" fill="oklch(70% 0.17 48)" opacity=".85"/><path d="M70 176c6-30 22-44 40-44s34 14 40 44" fill="oklch(70% 0.17 48)" opacity=".85"/><rect x="100" y="220" width="20" height="26" fill="oklch(80% 0.13 272)"/><rect x="70" y="242" width="80" height="10" rx="5" fill="oklch(80% 0.13 272)"/></svg>`,
+  arrow:`<svg viewBox="0 0 260 220" fill="none"><circle cx="190" cy="110" r="58" stroke="oklch(80% 0.13 272)" stroke-width="9"/><circle cx="190" cy="110" r="34" stroke="oklch(80% 0.13 272)" stroke-width="9"/><circle cx="190" cy="110" r="10" fill="oklch(70% 0.17 48)"/><path d="M20 110h160" stroke="oklch(70% 0.17 48)" stroke-width="9" stroke-linecap="round"/><path d="M20 110l-6-22M20 110l-6 22M36 110l-6-22M36 110l-6 22" stroke="oklch(70% 0.17 48)" stroke-width="7" stroke-linecap="round"/></svg>`,
+  letters:`<svg viewBox="0 0 240 240" fill="none"><text x="20" y="150" font-family="Noto Serif Armenian" font-size="120" font-weight="700" fill="oklch(70% 0.17 48)">Ա</text><text x="120" y="150" font-family="Noto Serif Armenian" font-size="120" font-weight="700" fill="oklch(80% 0.13 272)">Բ</text><rect x="20" y="190" width="200" height="8" rx="4" fill="oklch(80% 0.13 272)" opacity=".4"/></svg>`
+};
+const ICON = {
+  fire:`<svg class="ic" viewBox="0 0 48 48"><path d="M24 4c3 10 13 15 13 27a13 13 0 0 1-26 0c0-8 5-11 7-17 2 4 4 6 7 7-2-7-2-12-1-17z" fill="oklch(70% 0.17 48)"/></svg>`,
+  letter:`<svg class="ic" viewBox="0 0 48 48"><text x="6" y="40" font-family="Noto Serif Armenian" font-size="40" font-weight="700" fill="oklch(56% 0.235 272)">Ա</text></svg>`,
+  book:`<svg class="ic" viewBox="0 0 48 48" fill="none" stroke="oklch(56% 0.235 272)" stroke-width="4" stroke-linejoin="round"><path d="M6 10h14a4 4 0 0 1 4 4v26a4 4 0 0 0-4-4H6zM42 10H28a4 4 0 0 0-4 4v26a4 4 0 0 1 4-4h14z"/></svg>`,
+  web:`<svg class="ic" viewBox="0 0 48 48" fill="none" stroke="oklch(56% 0.235 272)" stroke-width="4"><circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c6 6 6 30 0 36M24 6c-6 6-6 30 0 36"/></svg>`,
+  ai:`<svg class="ic" viewBox="0 0 48 48"><path d="M24 4l4 14 14 6-14 6-4 14-4-14-14-6 14-6z" fill="oklch(70% 0.17 48)"/></svg>`
+};
+
+/* ---------- Content ---------- */
+const DISC = `Ծրագիրն իրականացվում է «NEST․ հմտությունների և տեխնոլոգիաների ազգային էկոհամակարգ» նախաձեռնության շրջանակում ՀՀ բարձր տեխնոլոգիական արդյունաբերության նախարարության և ՄԱԿ-ի Զարգացման ծրագրի (ՄԱԶԾ) համագործակցությամբ։ Կողմերը որևէ պատասխանատվություն չեն կրում գործընկեր կազմակերպությունների կողմից պատրաստված հաղորդակցման նյութերի բովանդակության համար։ Դրանցում ներկայացված հայտարարությունները, կարծիքները և տեղեկատվությունը բացառապես համապատասխան հեղինակների պատասխանատվությունն են և պարտադիր չէ, որ արտահայտեն կամ արտացոլեն կողմերի դիրքորոշումը կամ տեսակետը։`;
+
+window.DECK = {
+  footer: 'Հյուր դասընթաց 1 · Թվային և ԱԲ գործիքները իրական կյանքում',
+  slides: [
+
+/* 1 · COVER */
+{type:'cover', html:`
+  <div class="band"><img src="assets/img/logo-strip.png" alt="ՀՀ ԲՏԱ նախարարություն, Norway, International Partnerships Austria, ImpactAim, Armenia National SDG Innovation Lab, Technological Education Foundation, UNDP"></div>
+  <div class="inner">
+    <div class="kicker">Հյուր դասընթաց 1 · Առցանց · 60 րոպե</div>
+    <h1>Կրակից մինչև <em>արհեստական բանականություն</em></h1>
+    <p class="lead">Թվային և ԱԲ գործիքները իրական մասնագիտական կյանքում</p>
+    <div class="who"><img src="assets/img/tigran-2026.jpg" alt=""><div><b>Տիգրան Սարգսյան</b><span class="lat">linkedin.com/in/i-am-tigransargsyan</span></div></div>
+  </div>
+  <div class="disc">${DISC}</div>`},
+
+/* 2 · HOOK POLL */
+{html:`
+  <div class="kicker">Պատասխանեք չատում</div>
+  <h1>Երեք արագ <em>հարց</em></h1>
+  <div class="body"><ul class="poll">
+    <li><span class="hand">1</span>Ո՞վ է այս շաբաթ օգտագործել ChatGPT կամ այլ ԱԲ։</li>
+    <li><span class="hand">2</span>Ո՞վ է մի փոքր վախենում ԱԲ&#8209;ից։</li>
+    <li><span class="hand">3</span>Ո՞վ է կարծում, որ ԱԲ&#8209;ն իսկապես <em style="font-style:normal;color:var(--blue)">մտածում</em> է։</li>
+  </ul></div>`},
+
+/* 3 · INSTRUCTOR */
+{html:`
+  <div class="kicker">Ով եմ ես</div>
+  <div class="row-flex" style="margin-top:4px;align-items:flex-start;gap:52px">
+    <img class="portrait" src="assets/img/tigran-2026.jpg" alt="Տիգրան Սարգսյան" style="width:300px;height:300px">
+    <div style="flex:1">
+      <h1>Տիգրան <em>Սարգսյան</em></h1>
+      <ul class="facts">
+        <li>5+ տարի ղեկավարում եմ ապրանքի և մարքեթինգի <b>ԱԲ գործընթացները Picsart&#8209;ում (~150 մլն օգտատեր)</b></li>
+        <li>Ստեղծել եմ <b>120+ ԱԲ գործակալ</b> և <b>20+ կայք ու ապրանք</b>, որոնք իրական օգտագործման մեջ են</li>
+        <li>Դասընթացներում և սեմինարներում ուսուցանել եմ <b>60+ ապրանքի մենեջերի</b></li>
+        <li>Ծրագրավորող չեմ։ Այս ամենը արել եմ՝ <b>ԱԲ&#8209;ին ճիշտ առաջադրանք տալով</b>։</li>
+      </ul>
+    </div>
+  </div>
+  <div class="li li-sm"><img class="qr" src="assets/img/linkedin-qr.png" alt="LinkedIn QR"><div><b>Միացեք LinkedIn&#8209;ում</b><span>linkedin.com/in/i-am-tigransargsyan</span></div></div>`},
+
+/* 4 · MAP */
+{html:`
+  <div class="kicker">Այսօրվա ճանապարհը</div>
+  <h1>Հինգ <em>կանգառ</em></h1>
+  <div class="body"><div class="grid g5">
+    <div class="card"><div class="n">01</div><h3>Պատմություն</h3><p>Մարդը և իր գործիքները</p></div>
+    <div class="card"><div class="n">02</div><h3>Ի՞նչ է ԱԲ&#8209;ն</h3><p>Պարզ բառերով</p></div>
+    <div class="card hi"><div class="n">03</div><h3>Անվճար գործիքներ</h3><p>ChatGPT և Claude</p></div>
+    <div class="card"><div class="n">04</div><h3>Հմտություններ</h3><p>Աշխատանք և բիզնես</p></div>
+    <div class="card"><div class="n">05</div><h3>Դասեր</h3><p>Սխալներ և հարցեր</p></div>
+  </div>
+  <div class="card warm" style="margin-top:22px"><h3>Վերջում՝ 1 դաս + 1 քայլ</h3><p>Դուք կգրեք մեկ բան, որ հասկացաք, և մեկ բան, որ կանեք այս շաբաթ։</p></div></div>`},
+
+/* 5 · SECTION 1 */
+{type:'section', html:`
+  <span class="time">5 → 13 րոպե</span>
+  <div class="num">01</div>
+  <h1>Մարդը և իր <em>գործիքները</em></h1>
+  <p class="lead">ԱԲ&#8209;ն առաջին մեծ գործիքը չէ։ Այն պարզապես ամենանորն է։</p>`},
+
+/* 6 · MYTH: FIRE */
+{type:'myth', html:`
+  <div class="art">${ART.fire}</div>
+  <div class="txt">
+    <span class="tag">Առասպել · Կրակ</span>
+    <h1>Կրակը կարող է եփել ճաշը, կամ այրել տունը</h1>
+    <p class="story">Հին հույների առասպելում Պրոմեթևսը կրակը գողանում է աստվածներից ու տալիս մարդկանց։ Կրակն ինքը ոչ լավ է, ոչ վատ։ Ամեն ինչ կախված է նրանից, թե ում ձեռքում է այն։</p>
+    <div class="lesson">ԱԲ&#8209;ն նույնպես կրակ է։ Որոշողը մարդն է։</div>
+  </div>`},
+
+/* 7 · TIMELINE */
+{html:`
+  <div class="kicker">Մարդը միշտ ուժեղացել է գործիքներով</div>
+  <h1>Ամեն գործիք <em>ուժեղացրել</em> է մարդուն</h1>
+  <div class="body"><div class="timeline">
+    <div class="st"><span class="yr">Հնագույն</span><div class="dot"></div>${ICON.fire}<h3>Կրակ</h3><p>Ուժեղացրեց մարմինը՝ ջերմություն, սնունդ, անվտանգություն</p></div>
+    <div class="st"><span class="yr">405</span><div class="dot"></div>${ICON.letter}<h3>Գիր</h3><p>Մեսրոպ Մաշտոցի այբուբենը պահեց մեր միտքն ու լեզուն</p></div>
+    <div class="st"><span class="yr">1512</span><div class="dot"></div>${ICON.book}<h3>Տպագրություն</h3><p>Հակոբ Մեղապարտը տպեց առաջին հայերեն գիրքը</p></div>
+    <div class="st"><span class="yr">1990-ականներ</span><div class="dot"></div>${ICON.web}<h3>Համացանց</h3><p>Գիտելիքը հասանելի դարձավ ամեն գյուղում</p></div>
+    <div class="st now"><span class="yr">Այսօր</span><div class="dot"></div>${ICON.ai}<h3>ԱԲ</h3><p>Ուժեղացնում է մտածելը, գրելը և ստեղծելը</p></div>
+  </div></div>`},
+
+/* 8 · STATEMENT */
+{type:'statement', html:`
+  <div class="kicker">Գլխավոր միտքը</div>
+  <h1>Գործիքը մարդուն չի փոխարինում։ Այն ուժեղացնում է նրան, <em>ով գիտի՝ ինչ է ուզում։</em></h1>`},
+
+/* 9 · SECTION 2 */
+{type:'section', html:`
+  <span class="time">11 → 22 րոպե</span>
+  <div class="num">02</div>
+  <h1>Ի՞նչ է <em>ԱԲ&#8209;ն</em>, պարզ բառերով</h1>
+  <p class="lead">Երեք պատկեր՝ ստեղնաշար, արձագանք և հայելի։</p>`},
+
+/* 10 · KEYBOARD ANALOGY */
+{html:`
+  <div class="kicker">Պատկեր 1 · Ստեղնաշար</div>
+  <div class="row-flex" style="align-items:flex-start;gap:60px">
+    <div style="flex:1">
+      <h1>Քո հեռախոսը արդեն <em>գուշակում</em> է հաջորդ բառը</h1>
+      <p class="lead">ԱԲ&#8209;ն նույն գաղափարն է, բայց կարդացել է միլիոնավոր գրքեր, կայքեր և զրույցներ։ Այն ընտրում է ամենահավանական հաջորդ բառը, հետո՝ հաջորդը, հետո՝ հաջորդը։</p>
+      <div class="card muted" style="margin-top:26px"><p style="margin:0;color:var(--ink)"><b>Կարևոր.</b> «Ամենահավանականը» միշտ չէ, որ «ճիշտն» է։</p></div>
+    </div>
+    <div class="phone"><div class="scr">
+      <div class="msg">Բարի<span class="caret"></span></div>
+      <div class="chips"><span class="chip top">լույս</span><span class="chip">երեկո</span><span class="chip">գիշեր</span></div>
+    </div></div>
+  </div>`},
+
+/* 11 · MYTH: ECHO */
+{type:'myth', html:`
+  <div class="art">${ART.echo}</div>
+  <div class="txt">
+    <span class="tag">Պատկեր 2 · Էխո</span>
+    <h1>Էխոն կարող էր միայն կրկնել ուրիշների խոսքերը</h1>
+    <p class="story">Հին հունական առասպելում Էխո հավերժահարսը կորցրեց իր ձայնը։ Նա կարող էր միայն վերադարձնել այն, ինչ լսում էր։ ԱԲ&#8209;ն շատ խելացի Էխո է. այն վերադարձնում է մարդկության խոսքերը՝ նոր համադրություններով։</p>
+    <div class="lesson">Ինչ որ մարդիկ գրել են, ԱԲ&#8209;ն սովորել է։ Լավն էլ, սխալն էլ։</div>
+  </div>`},
+
+/* 12 · CONSCIOUSNESS */
+{html:`
+  <div class="kicker">Մեծ հարց</div>
+  <h1>Արդյո՞ք ԱԲ&#8209;ն <em>գիտակցություն</em> ունի</h1>
+  <div class="body"><div class="vs">
+    <div class="h a">Դու</div><div class="h m"></div><div class="h b">ԱԲ&#8209;ն այսօր</div>
+    <div class="c">Զգում ես ուրախություն, ցավ, վախ</div><div class="m">զգացմունք</div><div class="c">Զգացմունքի ապացույց չկա</div>
+    <div class="c">Ունես մարմին, ընտանիք, հիշողություններ</div><div class="m">կյանք</div><div class="c">Ունի միայն տեքստից սովորած օրինաչափություններ</div>
+    <div class="c">Ինքդ ես որոշում՝ ինչ ուզել</div><div class="m">նպատակ</div><div class="c">Սպասում է քո հարցին</div>
+    <div class="c">Սխալվում ես և հաճախ զգում ես դա</div><div class="m">սխալ</div><div class="c">Կարող է սխալվել վստահ ձայնով</div>
+  </div></div>`},
+
+/* 13 · MYTH: MIRROR */
+{type:'myth', html:`
+  <div class="art">${ART.mirror}</div>
+  <div class="txt">
+    <span class="tag">Պատկեր 3 · Հայելի</span>
+    <h1>ԱԲ&#8209;ն հայելի է, ոչ թե հոգի</h1>
+    <p class="story">Հեքիաթի կախարդական հայելին խոսում է, բայց ինքը ոչինչ չի ուզում։ Այն ցույց է տալիս այն, ինչ իր մեջ դրել են։ Լավ հարցը լավ պատասխան է բերում։ Մշուշոտ հարցը՝ մշուշոտ պատասխան։</p>
+    <div class="lesson">Պատասխանի որակը սկսվում է քո հարցից։</div>
+  </div>`},
+
+/* 14 · MYTH: GOLEM */
+{type:'myth', html:`
+  <div class="art">${ART.golem}</div>
+  <div class="txt">
+    <span class="tag">Լեգենդ · Կավե հսկա</span>
+    <h1>Հսկան անում էր ճիշտ այն, ինչ ասում էին</h1>
+    <p class="story">Հին լեգենդում վարպետը կավից հսկա է ստեղծում ու ասում՝ «ջուր բեր»։ Հսկան բերում է, բերում, բերում։ Տունը ջրով է լցվում, որովհետև ոչ ոք չասաց՝ որքան և երբ կանգնել։</p>
+    <div class="lesson">Ասա՝ ինչ, ում համար, որքան և ինչ ձևով։</div>
+  </div>`},
+
+/* 15 · PROMPT BRICKS */
+{html:`
+  <div class="kicker">Լավ հարցի 4 աղյուս</div>
+  <h1>Ինչպես <em>խոսել</em> ԱԲ&#8209;ի հետ</h1>
+  <div class="bricks" style="margin-top:26px">
+    <span class="brick b1"><i>1</i>Ով եմ ես</span>
+    <span class="brick b2"><i>2</i>Ինչ է պետք</span>
+    <span class="brick b3"><i>3</i>Ում համար և ինչու</span>
+    <span class="brick b4"><i>4</i>Ինչ ձևով</span>
+  </div>
+  <div class="grid g2" style="margin-top:26px">
+    <div><div class="lbl">ԹՈՒՅԼ</div><div class="prompt bad">Գրիր նամակ աշխատանքի մասին։</div></div>
+    <div><div class="lbl good">ՈՒԺԵՂ</div><div class="prompt"><mark class="m1">Ես 19 տարեկան եմ, լավ գիտեմ անգլերեն։</mark> <mark class="m2">Գրիր կարճ նամակ</mark> <mark class="m3">մեր քաղաքի հյուրանոցի տնօրենին, որ ամռանը ադմինիստրատորի աշխատանք եմ ուզում։</mark> <mark class="m4">5 նախադասություն, քաղաքավարի, հայերեն։</mark></div></div>
+  </div>`},
+
+/* 16 · SECTION 3 */
+{type:'section', html:`
+  <span class="time">24 → 44 րոպե</span>
+  <div class="num">03</div>
+  <h1>Երկու անվճար <em>գործիք</em></h1>
+  <p class="lead">Բացում ենք, գրանցվում ենք, փորձում ենք։ Միասին։</p>`},
+
+/* 17 · TOOLS */
+{html:`
+  <div class="kicker">Անվճար տարբերակներ</div>
+  <h1>ChatGPT և <em>Claude</em></h1>
+  <div class="body"><div class="grid g2">
+    <div class="tool">
+      <div class="row-flex" style="gap:16px"><img class="logo" src="assets/img/chatgpt-icon.png" alt="ChatGPT"><div><h3>ChatGPT</h3><div class="by">OpenAI · <span class="url">chatgpt.com</span></div></div></div>
+      <ul><li><b>✓</b>Անվճար տարբերակ, ամենատարածվածը</li><li><b>✓</b>Լավ է՝ արագ հարցերի, նկարների, ձայնային զրույցի համար</li><li><b>✓</b>Մուտք Google հաշվով կամ էլ. փոստով</li></ul>
+    </div>
+    <div class="tool">
+      <div class="row-flex" style="gap:16px"><img class="logo" src="assets/img/claude-icon.png" alt="Claude"><div><h3>Claude</h3><div class="by">Anthropic · <span class="url">claude.ai</span></div></div></div>
+      <ul><li><b>✓</b>Անվճար տարբերակ</li><li><b>✓</b>Լավ է՝ երկար տեքստերի, գրելու, ֆայլեր կարդալու համար</li><li><b>✓</b>Մուտք Google հաշվով կամ էլ. փոստով</li></ul>
+    </div>
+  </div>
+  <p class="small" style="margin-top:20px">Նաև անվճար են՝ <b class="lat">Gemini</b> (Google) և <b class="lat">Copilot</b> (Microsoft)։ Սկզբունքները նույնն են։</p></div>`},
+
+/* 18 · SIGN-UP STEPS */
+{html:`
+  <div class="kicker">Ուղիղ ցուցադրություն · ChatGPT, հետո Claude</div>
+  <h1>Ինչպես <em>գրանցվել</em> 3 րոպեում</h1>
+  <div class="body"><ol class="steps">
+    <li><div>Բացիր <b class="lat">chatgpt.com</b> կամ <b class="lat">claude.ai</b><small>Միայն պաշտոնական կայքը կամ App Store / Google Play-ի հավելվածը</small></div></li>
+    <li><div>Սեղմիր <b class="lat">Sign up</b> և ընտրիր <b class="lat">Continue with Google</b><small>Կամ գրիր էլ. փոստ և հաստատիր կոդով</small></div></li>
+    <li><div>Claude-ը կարող է խնդրել հեռախոսահամար<small>Սա նորմալ է. կգա SMS կոդ</small></div></li>
+    <li class="warn"><div>Մի վճարիր և քարտի տվյալներ մի մուտքագրիր<small>Անվճար տարբերակը բավական է</small></div></li>
+  </ol></div>`},
+
+/* 19 · NAVIGATION ANATOMY */
+{html:`
+  <div class="kicker">Ինչպես կողմնորոշվել</div>
+  <h1>Էկրանի <em>5 մասը</em></h1>
+  <div class="body"><div class="grid" style="grid-template-columns:1.45fr 1fr;gap:34px;align-items:start">
+    <div class="ui" style="position:relative">
+      <div class="side"><div class="row new">+ Նոր զրույց</div><div class="row">Նամակ հյուրանոցին</div><div class="row">Քննության պլան</div><div class="row">Բիզնեսի գաղափար</div><div style="margin-top:auto" class="row">⚙ Կարգավորումներ</div></div>
+      <div class="main"><div class="bub me">Ես 19 տարեկան եմ…</div><div class="bub ai">Հարգելի պարոն Հովհաննիսյան…</div><div class="input"><span class="clip">+</span>Գրիր հարցդ այստեղ…</div></div>
+      <span class="pin" style="left:194px;top:14px">1</span><span class="pin" style="left:194px;top:90px">2</span><span class="pin" style="right:16px;bottom:22px">3</span><span class="pin" style="left:248px;bottom:22px">4</span><span class="pin" style="left:194px;bottom:14px">5</span>
+    </div>
+    <ul class="legend">
+      <li><b>1</b>Նոր զրույց՝ նոր թեմայի համար</li>
+      <li><b>2</b>Պատմություն՝ հին զրույցները</li>
+      <li><b>3</b>Հարցի դաշտ՝ գրիր կամ խոսիր</li>
+      <li><b>4</b>Կցել՝ ֆայլ կամ նկար</li>
+      <li><b>5</b>Կարգավորումներ՝ անջատիր «Improve the model» կամ «Help improve Claude»</li>
+    </ul>
+  </div></div>`},
+
+/* 20 · LIVE DEMO */
+{html:`
+  <div class="kicker">Ուղիղ ցուցադրություն</div>
+  <h1>Նույն հարցը, <em>երկու գործիք</em></h1>
+  <div class="body"><div class="grid g2" style="gap:26px">
+    <div class="card"><div class="n">ՀԱՐՑԸ</div><p style="font-size:21px;color:var(--ink)">Ես 19 տարեկան եմ, լավ գիտեմ անգլերեն։ Գրիր կարճ նամակ մեր քաղաքի հյուրանոցի տնօրենին, որ ամռանը ադմինիստրատորի աշխատանք եմ ուզում։ 5 նախադասություն, քաղաքավարի, հայերեն։</p></div>
+    <div class="card warm"><div class="n">ՄԻԱՍԻՆ ՍՏՈՒԳՈՒՄ ԵՆՔ</div><ul class="legend" style="margin-top:6px"><li><b>?</b>Ո՞ր պատասխանն է ավելի բնական հնչում</li><li><b>?</b>Կա՞ սխալ կամ հորինված բան</li><li><b>?</b>Ի՞նչ կփոխես, որ քոնը լինի</li></ul></div>
+  </div></div>`},
+
+/* 21 · TASK */
+{type:'task', html:`
+  <span class="badge">ՁԵՐ ՀԵՐԹՆ Է · ԱՆՀԱՏԱԿԱՆ</span>
+  <div class="timer">7<span>րոպե</span></div>
+  <h1>Գրեք 4 աղյուսով հարց ձեր <em>իրական</em> կյանքից</h1>
+  <div class="body"><div class="grid g3">
+    <div class="card"><div class="n">Ա · ԱՇԽԱՏԱՆՔ</div><h3>Նամակ գործատուին</h3><p>Ամառային կամ առաջին աշխատանքի համար</p></div>
+    <div class="card"><div class="n">Բ · ՈՒՍՈՒՄ</div><h3>Սովորելու պլան</h3><p>Մի թեմա, որ ուզում ես սովորել 2 շաբաթում</p></div>
+    <div class="card"><div class="n">Գ · ԲԻԶՆԵՍ</div><h3>Փոքր բիզնեսի գաղափար</h3><p>Մի խնդիր քո համայնքում և 3 լուծում</p></div>
+  </div>
+  <p class="lead" style="font-size:20px;margin-top:22px">Փորձեք ChatGPT-ում <b>և</b> Claude-ում։ Հետո չատում գրեք <b>1 բան, որ ճիշտ է</b> և <b>1 բան, որ պետք է ուղղել</b>։</p></div>`},
+
+/* 22 · SECTION 4 */
+{type:'section', html:`
+  <span class="time">44 → 51 րոպե</span>
+  <div class="num">04</div>
+  <h1>Ինչ հմտություններ են <em>պետք</em></h1>
+  <p class="lead">Գործիքները փոխվում են ամեն տարի։ Այս հմտությունները՝ ոչ։</p>`},
+
+/* 23 · MYTH: HAYK */
+{type:'myth', html:`
+  <div class="art">${ART.arrow}</div>
+  <div class="txt">
+    <span class="tag">Հայկական առասպել · Հայկ Նահապետ</span>
+    <h1>Հայկը հաղթեց մեկ նետով</h1>
+    <p class="story">Ավանդության համաձայն՝ Հայկը ուժով չէր գերազանցում Բելին։ Բայց նա հստակ գիտեր՝ ուր է նշան բռնում։ Մեկ ճշգրիտ նետը որոշեց ամեն ինչ։</p>
+    <div class="lesson">Աղեղը գործիք է։ Նպատակը քոնն է։</div>
+  </div>`},
+
+/* 24 · SKILLS */
+{html:`
+  <div class="kicker">Աշխատանքի և բիզնեսի համար</div>
+  <h1>5 հմտություն, որ ԱԲ&#8209;ն <em>չի փոխարինում</em></h1>
+  <div class="body"><div class="grid g5">
+    <div class="card"><div class="n">01</div><h3>Լավ հարց տալ</h3><p>Հստակ նպատակ, ինչպես Հայկը</p></div>
+    <div class="card"><div class="n">02</div><h3>Ստուգել</h3><p>Չհավատալ առաջին պատասխանին</p></div>
+    <div class="card"><div class="n">03</div><h3>Պարզ գրել ու խոսել</h3><p>Մարդիկ վարձում են մարդկանց</p></div>
+    <div class="card"><div class="n">04</div><h3>Թիմով աշխատել</h3><p>Վստահություն, խոստումներ կատարել</p></div>
+    <div class="card hi"><div class="n">05</div><h3>Սովորել նորը</h3><p>Ամեն ամիս՝ մեկ նոր բան</p></div>
+  </div>
+  <div class="grid g3" style="margin-top:20px">
+    <div class="card muted"><div class="n">ԱՇԽԱՏԱՆՔ</div><p style="margin:0;color:var(--ink)">ԱԲ&#8209;ն օգնում է ռեզյումեն ու հարցազրույցի պատրաստությունը</p></div>
+    <div class="card muted"><div class="n">ԲԻԶՆԵՍ</div><p style="margin:0;color:var(--ink)">Ապրանքի նկարագրություն, Instagram-ի պլան</p></div>
+    <div class="card muted"><div class="n">ՈՒՍՈՒՄ</div><p style="margin:0;color:var(--ink)">Բացատրություն, թեստային հարցեր</p></div>
+  </div></div>`},
+
+/* 25 · LESSONS LEARNED */
+{html:`
+  <div class="kicker">Իմ սխալները, որ դուք չկրկնեք</div>
+  <h1>Երեք <em>դաս</em> իմ աշխատանքից</h1>
+  <div class="body"><div class="grid g3">
+    <div class="card warm"><div class="n">ԴԱՍ 1</div><h3>ԱԲ&#8209;ն վստահ ձայնով սխալ ասաց</h3></div>
+    <div class="card"><div class="n">ԴԱՍ 2</div><h3>Լավ արդյունքը եկավ 3&#8209;րդ փորձից</h3></div>
+    <div class="card"><div class="n">ԴԱՍ 3</div><h3>Ավելի քիչ գրեցի, ավելի շատ մտածեցի</h3></div>
+  </div></div>`},
+
+/* 26 · GOLDEN RULES */
+{html:`
+  <div class="kicker">Անվտանգություն</div>
+  <h1>Երեք <em>ոսկե կանոն</em></h1>
+  <div class="body"><div class="rules">
+    <div class="card warm"><div class="big">1</div><h3>Գաղտնին չես տալիս</h3><p>Գաղտնաբառ, անձնագիր, քարտ, հասցե, ուրիշի նկարներ ու տվյալներ</p></div>
+    <div class="card"><div class="big">2</div><h3>Ստուգում ես</h3><p>Կարևոր փաստը՝ առնվազն 2 վստահելի աղբյուրով</p></div>
+    <div class="card"><div class="big">3</div><h3>Որոշողը դու ես</h3><p>ԱԲ&#8209;ն առաջարկում է։ Ստորագրում ես դու։</p></div>
+  </div></div>`},
+
+/* 27 · FIRE CALLBACK */
+{type:'statement', dark:true, html:`
+  <div class="kicker">Վերադառնանք կրակին</div>
+  <h1>Կրակն արդեն <span class="fire">ձեր ձեռքում է։</span> Դուք եք որոշում՝ ինչ եփել դրանով։</h1>`},
+
+/* 28 · Q&A */
+{html:`
+  <div class="kicker">Ձեր հարցերը</div>
+  <h1>Հարցրեք <em>ամեն ինչ</em></h1>
+  <div class="body"><div class="grid g3">
+    <div class="card muted"><p style="margin:0;color:var(--ink);font-size:21px">«ԱԲ&#8209;ն կխլի՞ իմ աշխատանքը»</p></div>
+    <div class="card muted"><p style="margin:0;color:var(--ink);font-size:21px">«Կարո՞ղ եմ ԱԲ&#8209;ով գումար աշխատել»</p></div>
+    <div class="card muted"><p style="margin:0;color:var(--ink);font-size:21px">«Ո՞ր գործիքն է ամենալավը»</p></div>
+  </div>
+  <p class="lead" style="font-size:20px">Կարող եք նաև գրել հարցը չատում։</p></div>`},
+
+/* 29 · REFLECTION */
+{html:`
+  <div class="kicker">Արդյունք · 3 րոպե · Գրեք չատում</div>
+  <h1>Մեկ դաս, <em>մեկ քայլ</em></h1>
+  <div class="body"><div class="reflect">
+    <div class="card"><div class="n">ԴԱՍ</div><h3>Այսօր ես հասկացա, որ…</h3><div class="fill"></div><div class="fill"></div></div>
+    <div class="card hi"><div class="n">ՔԱՅԼ</div><h3>Այս շաբաթ ես…</h3><div class="fill" style="border-color:oklch(75% 0.12 272)"></div><div class="fill" style="border-color:oklch(75% 0.12 272)"></div></div>
+  </div>
+  <p class="small" style="margin-top:16px">Օրինակ՝ «Այս շաբաթ ես Claude-ով կգրեմ իմ ռեզյումեի առաջին տարբերակը և կցույց տամ ուսուցչին»։</p></div>`},
+
+/* 30 · CLOSE */
+{type:'cover', html:`
+  <div class="band"><img src="assets/img/logo-strip.png" alt="Partner logos"></div>
+  <div class="inner" style="justify-content:center">
+    <div class="kicker">Շնորհակալություն</div>
+    <div class="row-flex" style="gap:56px;align-items:center;justify-content:space-between">
+      <div><h1>Հաջողություն։ <em>Սկսեք այսօր։</em></h1>
+      <p class="lead">Տիգրան Սարգսյան</p></div>
+      <div class="li" style="flex:none"><img class="qr" src="assets/img/linkedin-qr.png" alt="LinkedIn QR" style="width:190px;height:190px"><div><b>LinkedIn</b><span>linkedin.com/in/i-am-tigransargsyan</span><p>Գրեք ինձ ձեր առաջին<br>ԱԲ արդյունքի մասին</p></div></div>
+    </div>
+  </div>
+  <div class="disc">${DISC}</div>`}
+  ]
+};
+</script>
+<script src="assets/undp.js?v=3"></script>
+</body>
+</html>
